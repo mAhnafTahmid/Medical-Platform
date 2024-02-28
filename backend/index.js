@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose'
 
 import hospitalRouter from './routes/hospitalRoute.js';
+import doctorRouter from './routes/doctorRoute.js'
 
 
 dotenv.config();
@@ -12,7 +13,7 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 const dbURL = process.env.mongoDBURL
-// import { dbconn } from './dbconn.js' 
+ 
 
 // middleware
 app.use(express.json())
@@ -20,7 +21,7 @@ app.use(cors());
 
 // routes
 app.use('/hospital', hospitalRouter)
-
+app.use('/doctor', doctorRouter)
 
 // server running code and a root route for checking
 app.get('/*', async (req, res) => {
