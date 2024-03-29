@@ -111,3 +111,13 @@ export const deleteAnnouncement = async (req, res) => {
         res.status(500).send({ message: error.message })
     }
 }
+
+export const getAllHospitals = async (req, res) => {
+    try {
+        const hospital = await Hospital.find()
+        return res.status(200).send(hospital);
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send({ message: error.message })
+    }
+}
