@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 function SignUp() {
-    const [user, setUser] = useState([]);
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [speciality, setSpeciality] = useState('');
@@ -12,9 +11,9 @@ function SignUp() {
     const [qualification, setQualification] = useState('');
     const navigate = useNavigate(); // Add this line
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    // useEffect(() => {
+    //     fetchUsers();
+    // }, []);
 
     const fetchUsers = () => {
         axios
@@ -30,6 +29,7 @@ function SignUp() {
         .post('http://localhost:3001/register', { email, password, speciality, time, qualification })
         .then(() => {
             alert('Registration Successful');
+            setName('');
             setEmail('');
             setPassword('');
             setSpeciality('');
@@ -48,6 +48,15 @@ function SignUp() {
             <div className='w-[50%] h-[90%] bg-[#1a1a1a] text-white flex justify-center items-center'>
                 <form className='text-center border rounded-lg w-[600px] h-[600px] p-9'
                 onSubmit={handleRegister}>
+                    <label>Name</label>
+                    <br />
+                    <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2'
+                    type='text'
+                    placeholder='Name'
+                    value={name}
+                    onChange={(e) => setName(e.target.value)} />
+                    <br /><br>
+                    </br>
                     {/* Email Input */}
                     <label>Email</label>
                     <br />

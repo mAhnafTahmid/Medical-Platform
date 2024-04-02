@@ -1,17 +1,16 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({ 
-    email: { type: String, required: true },
-    speciality: { type: String, required: true},
-    time: {type: String,required: true},
-    password: { type: String, required: true },
-    qualification: { type: String, required: true }
- })
-
- //all the shema and put in a var egg in the buket
-const User =mongoose.model('Users',userSchema);
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  speciality: { type: String, required: true },
+  time: { type: String, required: true },
+  password: { type: String, required: true },
+  qualification: { type: String, required: true },
+  prescriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Pres' }] // Reference to prescriptions
+});
 
 
+const User = mongoose.model('Users', userSchema);
 
-// to use it somewhere else
-module.exports =User
+
+module.exports = User;

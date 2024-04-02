@@ -5,9 +5,12 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('./models/userSchema'); // Corrected import statement
+const User = require('./models/userSchema'); // Connected import statementconst Pres= require("./models/prescriptionSchema");
+const Pres = require('./models/prescriptionSchema');
+const Patient = require('./models/patientSchema');
 
-const SECRET_KEY = 'secretkey'
+const SECRET_KEY = 'super-secret-key'
+
 
 const app = express();
 
@@ -30,9 +33,9 @@ app.use(cors());
 // Post request and respond in JSON format
 app.post('/register', async (req, res) => {
     try {
-      const { email, password, speciality, time, qualification } = req.body;
+      const {name, email, password, speciality, time, qualification } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({ email, password: hashedPassword, speciality, time, qualification });
+      const newUser = new User({ name,email, password: hashedPassword, speciality, time, qualification });
       await newUser.save();
       res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
@@ -71,7 +74,37 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Error logging in' })
     }
-})
+});
+
+////////////////
+app.post('/Prescription', async (req, res) => {
+  try {
+    const { patientName, patientEmail, prescription } = req.body;
+    const newPres = new Pres({ patientName, patientEmail, prescription });
+    await newPres.save();
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
+////////////////
 
+//PatientList.js
+
+////////////////
+
+
+//////////////////
+
+app.get('/PatientList', async (req, res) => {
+  try {
+    const patients = await Patient.find({});
+    res.send({status:"ok",data:patients})
+  } catch (err) {
+    console.log('Error fetching patients:', error);
+   // res.status(500).json({ error: 'Internal server error' });
+  }
+});
