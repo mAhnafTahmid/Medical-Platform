@@ -19,7 +19,11 @@ const doctorSchema = mongoose.Schema({
         required: true
     },
     hospital: {
-        type: [String],
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
         required: true
     },
     pdfs: {

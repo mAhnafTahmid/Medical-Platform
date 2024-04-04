@@ -1,5 +1,9 @@
 import Hospital from '../models/hospitalModel.js'
 import Doctor from '../models/doctorModel.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken'
+
+const SECRET_KEY = 'super-secret-key'
 
 export const removeDoctor = async (req, res) => {
     try {
@@ -61,3 +65,57 @@ export const createDoctor = async (req, res) => {
     }
 };
 
+// Arundhati's Doctor SignUp
+export const registerDoctor = async (req, res) => {
+    try {
+        const { name, email, phoneNo, specialty, hospital, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new Doctor({ 
+            name,
+            email,
+            phoneNo,
+            specialty,
+            hospital,
+            password: hashedPassword,
+            pdfs: [] 
+        });
+        await newUser.save();
+        res.status(201).json({ message: 'User created successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+export const loginDoctor = async (req, res) => {
+    try {
+        const { email, password } = req.body
+        const user = await Doctor.findOne({ email: email })
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials'})
+        }
+
+        let isPasswordValid;
+        try {
+            isPasswordValid = await bcrypt.compare(password, user.password)
+        } catch (error) {
+            return res.status(500).json({ error: 'Error comparing passwords' })
+        }
+
+        if(!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid credentials' })
+        }
+
+        let token;
+        try {
+            token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1hr' })
+        } catch (error) {
+            return res.status(500).json({ error: 'Error signing token' })
+        }
+
+        res.status(200).json({ message: 'Login successful', token: token, user: user });
+    } catch (error) {
+        res.status(500).json({ error: 'Error logging in' })
+    }
+}
