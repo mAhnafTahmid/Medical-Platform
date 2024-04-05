@@ -68,7 +68,7 @@ export const createDoctor = async (req, res) => {
 // Arundhati's Doctor SignUp
 export const registerDoctor = async (req, res) => {
     try {
-        const { name, email, phoneNo, specialty, hospital, password } = req.body;
+        const { name, email, phoneNo, specialty, hospital, department, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new Doctor({ 
             name,
@@ -76,6 +76,7 @@ export const registerDoctor = async (req, res) => {
             phoneNo,
             specialty,
             hospital,
+            department,
             password: hashedPassword,
             pdfs: [] 
         });
@@ -117,5 +118,20 @@ export const loginDoctor = async (req, res) => {
         res.status(200).json({ message: 'Login successful', token: token, user: user });
     } catch (error) {
         res.status(500).json({ error: 'Error logging in' })
+    }
+}
+
+export const getDoctorByEmail = async (req, res) => {
+    try {
+        if (!req.params.email){
+            return res.status(400).send({
+                message: 'No hospital to search for announcement'
+            })
+        }
+        const doctor = await Doctor.findOne({ email: req.params.email })
+        return res.status(200).send(doctor);
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send({ message: error.message })
     }
 }

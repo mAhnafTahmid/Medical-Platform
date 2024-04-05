@@ -26,7 +26,7 @@ function DoctorLogin() {
             alert('Login successful');
             setEmail('');
             setPassword('');
-            navigate('/account');
+            navigate(`/doctor/profile/${data.user.email}`);
             window.location.reload();
             localStorage.setItem('token', token);
         } catch (error) {

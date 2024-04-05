@@ -7,6 +7,7 @@ function SignUp() {
     const [phoneNo, setPhoneNo] = useState('');
     const [specialty, setSpecialty] = useState('');
     const [hospital, setHospital] = useState('');
+    const [department, setDepartment] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
@@ -25,6 +26,7 @@ function SignUp() {
                     phoneNo,
                     specialty,
                     hospital,
+                    department,
                     password, 
                     pdfs: []
                 })
@@ -37,8 +39,9 @@ function SignUp() {
                 setPhoneNo('');
                 setSpecialty('');
                 setHospital('');
+                setDepartment('')
                 setPassword('');
-                navigate('/login');
+                navigate('/doctor/login');
             } else {
                 console.log('Unable to register user');
             }
@@ -49,8 +52,8 @@ function SignUp() {
 
     return (
         <div className='w-full h-screen flex'>
-            <div className='w-[50%] h-[90%] bg-[#1a1a1a] text-white flex justify-center items-center'>
-                <form className='text-center border rounded-lg w-[600px] h-[600px] p-9' onSubmit={handleRegister}>
+            <div className='w-[50%] h-full bg-[#1a1a1a] text-white flex justify-center items-center'>
+                <form className='text-center border rounded-lg w-[600px] h-full p-9' onSubmit={handleRegister}>
                     <label>Name</label><br />
                     <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='text' placeholder='Name'
                         value={name} onChange={(e) => setName(e.target.value)} /><br /><br />
@@ -66,6 +69,9 @@ function SignUp() {
                     <label>Hospital</label><br />
                     <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='text' placeholder='Hospital'
                         value={hospital} onChange={(e) => setHospital(e.target.value)} /><br /><br />
+                    <label>Department</label><br />
+                    <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='text' placeholder='Department'
+                        value={department} onChange={(e) => setDepartment(e.target.value)} /><br /><br />
                     <label>Password</label><br />
                     <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='password' placeholder='Password'
                         value={password} onChange={(e) => setPassword(e.target.value)} /><br /><br />

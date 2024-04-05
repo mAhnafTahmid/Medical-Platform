@@ -6,11 +6,14 @@ import PatientProfile from './pages/PatientProfile';
 import HomePage from './pages/HomePage';
 import DoctorSignUp from './pages/DoctorSignUp';
 import DoctorLogin from './pages/DoctorLogin';
+import DoctorProfile from './pages/DoctorProfile';
+import Header from './pages/Header';
 
 const App = () => {
   return (
     <>
       <BrowserRouter>
+        <Header />
         <Routes>
           <Route exact path="/" element={<HomePage />} />
           <Route path="/department" element={<Department />} />
@@ -18,6 +21,7 @@ const App = () => {
           <Route path="/hospital" element={<HospitalProfile />} />
           <Route path="/doctor/signup" element={<DoctorSignUp />} />
           <Route path="/doctor/login" element={<DoctorLogin />} />
+          <Route path="/doctor/profile/:email" element={<DoctorProfile />} />
         </Routes>
       </BrowserRouter>
     </>
