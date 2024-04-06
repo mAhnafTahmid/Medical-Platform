@@ -3,10 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 
 function Header() {
     const isUserSignedIn = !!localStorage.getItem('token')
+    const role = localStorage.getItem('role');
     const navigate = useNavigate();
 
     const handleSignOut = () => {
         localStorage.removeItem('token')
+        localStorage.removeItem('role')
+        localStorage.removeItem('email')
         navigate('/')
     }
 
@@ -16,9 +19,17 @@ function Header() {
         <ul className='flex gap-6'>
             {isUserSignedIn ? (
                 <>
-                <Link to='/doctor/profile/:email'><li>Profile</li></Link>
-                <li><button onClick={handleSignOut}>Sign Out</button></li>
-                </>
+                    {role === 'doctor' && (
+                        <Link to='/doctor/profile'><li>Doctor Profile</li></Link>
+                    )}
+                    {role === 'patient' && (
+                        <Link to='/patient/profile'><li>Patient Profile</li></Link>
+                    )}
+                    {role === 'hospital' && (
+                        <Link to='/hospital/profile'><li>Hospital Profile</li></Link>
+                    )}
+                    <li><button onClick={handleSignOut}>Sign Out</button></li>
+                 </>
             ) : (
                 <>
                 <Link to='/doctor/login'><li>Login</li></Link>

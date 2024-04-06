@@ -1,5 +1,6 @@
 import Hospital from '../models/hospitalModel.js'
 import Doctor from '../models/doctorModel.js';
+import Patient from '../models/patientModel.js'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
@@ -133,5 +134,49 @@ export const getDoctorByEmail = async (req, res) => {
     } catch (error) {
         console.log(error.message)
         res.status(500).send({ message: error.message })
+    }
+}
+
+export const loginAll = async (req, res) => {
+    try {
+        const { email, password } = req.body
+        let user = await Patient.findOne({ email: email });
+        let role = 'patient'
+
+        if (!user) {
+            user = await Doctor.findOne({ email: email });
+            role = 'doctor'
+        }
+
+        if (!user) {
+            user = await Hospital.findOne({ email: email });
+            role = 'hospital'
+        }
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials'})
+        }
+
+        let isPasswordValid;
+        try {
+            isPasswordValid = await bcrypt.compare(password, user.password)
+        } catch (error) {
+            return res.status(500).json({ error: 'Error comparing passwords' })
+        }
+
+        if(!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid credentials' })
+        }
+
+        let token;
+        try {
+            token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1hr' })
+        } catch (error) {
+            return res.status(500).json({ error: 'Error signing token' })
+        }
+
+        res.status(200).json({ message: 'Login successful', token: token, user: user, role: role });
+    } catch (error) {
+        res.status(500).json({ error: 'Error logging in' })
     }
 }

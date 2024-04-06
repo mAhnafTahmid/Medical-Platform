@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 
 
 const HospitalProfile = () => {
@@ -17,9 +18,16 @@ const HospitalProfile = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
-  const mail = 'info@newhospital.com';
+  const mail = localStorage.getItem('email');
+  const role = localStorage.getItem('role');
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (role !== 'hospital') {
+      navigate('/doctor/login')
+      window.location.reload();
+    }
+    
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:3055/hospital/${mail}`, {

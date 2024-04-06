@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 
 const PatientProfile = () => {
-  const [email, setEmail] = useState('john.doe@example.com');
+  const [email, setEmail] = useState('');
   const [patient, setPatient] = useState(null);
   const [pdfFile, setPdfFile] = useState(null);
   const [prescription, setPrescription] = useState(null);
   const [uploadedPDFs, setUploadedPDFs] = useState([]);
+  const mail = localStorage.getItem('email');
+  const role = localStorage.getItem('role');
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (role !== 'patient') {
+      navigate('/doctor/login')
+      window.location.reload();
+    }
+    setEmail(mail)
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:3055/patient/${email}`, {

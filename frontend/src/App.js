@@ -8,6 +8,8 @@ import DoctorSignUp from './pages/DoctorSignUp';
 import DoctorLogin from './pages/DoctorLogin';
 import DoctorProfile from './pages/DoctorProfile';
 import Header from './pages/Header';
+import HospitalLogin from './pages/HospitalLogin';
+import HospitalSignUp from './pages/HospitalSignup';
 
 const App = () => {
   return (
@@ -17,11 +19,13 @@ const App = () => {
         <Routes>
           <Route exact path="/" element={<HomePage />} />
           <Route path="/department" element={<Department />} />
-          <Route path="/patient" element={<PatientProfile />} />
-          <Route path="/hospital" element={<HospitalProfile />} />
+          <Route path="/patient/profile" element={<PatientProfile />} />
+          <Route path="/hospital/profile" element={<HospitalProfile />} />
           <Route path="/doctor/signup" element={<DoctorSignUp />} />
           <Route path="/doctor/login" element={<DoctorLogin />} />
-          <Route path="/doctor/profile/:email" element={<DoctorProfile />} />
+          <Route path="/doctor/profile" element={<DoctorProfile />} />
+          <Route path="/hospital/signup" element={<HospitalSignUp />} />
+          <Route path="/hospital/login" element={<HospitalLogin />} />
         </Routes>
       </BrowserRouter>
     </>

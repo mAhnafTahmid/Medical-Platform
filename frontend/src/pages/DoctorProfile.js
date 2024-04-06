@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 function DoctorProfile() {
     const [doctor, setDoctor] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const { email } = useParams();
+    // const { email } = useParams();
+    const email = localStorage.getItem('email');
+    const role = localStorage.getItem('role');
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (role !== 'doctor') {
+            navigate('/doctor/login')
+            window.location.reload();
+        }
+        
         const fetchData = async () => {
             try {
                 const response = await fetch(`http://localhost:3055/doctor/${email}`);
@@ -40,11 +49,11 @@ function DoctorProfile() {
 
                 <div className='bg-white rounded p-4 mb-4'>
                     <p><strong style={{ color: 'black' }}>Doctor: {doctor.name}</strong> </p>
-                    <p><strong style={{ color: 'black' }}>Email: {doctor.email}</strong></p>
+                    <p><strong style={{ color: 'black' }}>Email Address: {doctor.email}</strong></p>
                     <p><strong style={{ color: 'black' }}>Degree: {doctor.specialty}</strong></p>
                     <p><strong style={{ color: 'black' }}>Phone Number: {doctor.phoneNo}</strong></p>
                     <p><strong style={{ color: 'black' }}>Hospital: {doctor.hospital}</strong></p>
-                    <p><strong style={{ color: 'black' }}>Hospital: {doctor.department}</strong></p>
+                    <p><strong style={{ color: 'black' }}>Depertment of: {doctor.department}</strong></p>
                 </div>
 
                 <Link to="/PrescriptionForm">

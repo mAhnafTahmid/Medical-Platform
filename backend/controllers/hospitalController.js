@@ -1,4 +1,5 @@
 import Hospital from '../models/hospitalModel.js'
+import bcrypt from 'bcrypt';
 
 export const createHospital = async (req, res) => {
     try {
@@ -121,3 +122,35 @@ export const getAllHospitals = async (req, res) => {
         res.status(500).send({ message: error.message })
     }
 }
+
+export const signUpHospital = async (req, res) => {
+    try {
+        const { name, email, phoneNo, address, area, city, password, description, departments } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const departmentNames = Object.keys(departments);
+        const emptyDepartments = {};
+        departmentNames.forEach(departmentName => {
+            emptyDepartments[departmentName] = [];
+        });
+        const newHospital = new Hospital({ 
+            name, 
+            email, 
+            phoneNo, 
+            city, 
+            area, 
+            address, 
+            departments: emptyDepartments, 
+            description, 
+            password: hashedPassword, 
+            announcements: [] 
+        });
+
+        await newHospital.save();
+
+        res.status(201).json({ message: 'Hospital created successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+

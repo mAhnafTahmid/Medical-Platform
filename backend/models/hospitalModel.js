@@ -8,6 +8,14 @@ const departmentSchema = mongoose.Schema({
     degree: {
         type: String,
         required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    appoitments: {
+        type: [[String]],
+        required: true
     }
 });
 
@@ -32,16 +40,9 @@ const hospitalSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    roadNo: {
+    address: {
         type: String,
         required: true
-    },
-    houseNo: {
-        type: String,
-        required: true
-    },
-    laneNo: {
-        type: String
     },
     departments: {
         type: Map,
@@ -51,8 +52,9 @@ const hospitalSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    pendingRequests: {
-        type: [String]
+    password: {
+        type: String,
+        required: true
     },
     announcements: {
         type: [[String]]
