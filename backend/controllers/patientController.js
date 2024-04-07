@@ -1,22 +1,26 @@
 import Patient from '../models/patientModel.js'
-
+import bcrypt from 'bcrypt';
 
 export const createPatient = async (req, res) => {
     try {
         if (
             !req.body.name ||
             !req.body.email ||
-            !req.body.phoneNo
+            !req.body.phoneNo ||
+            !req.body.password
         ){
             return res.status(400).send({
-                message: 'Send all the required fields: name, email, phone number'
+                message: 'Send all the required fields: name, email, phone number, password'
             });
         }
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const newPatient = {
             name: req.body.name,
             email: req.body.email,
             phoneNo: req.body.phoneNo,
+            password: hashedPassword,
             prescriptions: req.body.prescriptions || [],
             pdfs: req.body.pdfs || [],
             appointments: req.body.appointments || []
@@ -30,6 +34,7 @@ export const createPatient = async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 };
+
 
 export const getPatientByEmail = async (req, res) => {
     try {

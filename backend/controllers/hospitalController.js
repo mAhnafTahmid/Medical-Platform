@@ -1,4 +1,5 @@
 import Hospital from '../models/hospitalModel.js'
+import Patient from '../models/patientModel.js';
 import bcrypt from 'bcrypt';
 
 export const createHospital = async (req, res) => {
@@ -154,3 +155,46 @@ export const signUpHospital = async (req, res) => {
     }
 }
 
+export const makeAppointment = async (req, res) => {
+  const { patientName, patientEmail, selectedDepartment, selectedDoctor, hospitalEmail } = req.body;
+
+  try {
+    const hospital = await Hospital.findOne({ email: hospitalEmail });
+    if (!hospital) {
+      return res.status(404).json({ message: 'Hospital not found' });
+    }
+
+    const department = hospital.departments.find(dep => dep.name === selectedDepartment);
+    if (!department) {
+    return res.status(404).json({ message: 'Department not found' });
+    }
+
+    // Find the selected doctor in the department
+    const doctor = department.appointments.find(doc => doc.name === selectedDoctor);
+    if (!doctor) {
+    return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    // Calculate estimated time
+    const estimatedTime = ((doctor.appointments.length / 30) * 5).toString();
+
+    // Insert appointment details into doctor's appointments
+    doctor.appointments.push([patientName, patientEmail]);
+
+    // Save changes to the hospital
+    await hospital.save();
+
+    // Insert appointment details into patient schema
+    const patient = await Patient.findOne({ email: patientEmail });
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+    patient.appointments.push([hospital.name, selectedDoctor, estimatedTime]);
+    await patient.save();
+
+    res.status(201).json({ message: 'Appointment created successfully' });
+  } catch (error) {
+    console.error('Error creating appointment:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

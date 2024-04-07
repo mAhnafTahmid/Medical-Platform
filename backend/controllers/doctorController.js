@@ -17,12 +17,26 @@ export const removeDoctor = async (req, res) => {
         if (!department) {
             throw new Error('Department not found')
         }
+        const doctor = department.find(doctor => doctor.name === doctorName);
+        if (!doctor) {
+            throw new Error('Doctor not found in the department');
+        }
+        const doctorEmail = doctor.email;
         const index = department.findIndex(doctor => doctor.name === doctorName)
         if (index === -1) {
             throw new Error('Doctor not found in the department')
         }
         department.splice(index, 1)
         await hospital.save()
+
+        // Find the doctor by their email
+        const doctorToDelete = await Doctor.findOne({ email: doctorEmail });
+        if (!doctorToDelete) {
+            throw new Error('Doctor not found in the Doctor collection');
+        }
+
+        // Remove the doctor from the Doctor collection
+        await Doctor.deleteOne({ email: doctorEmail });
         
         console.log(`Doctor ${doctorName} removed from ${departmentName} department in ${hospitalName} hospital`)
         return res.status(200).send(hospital)
@@ -69,8 +83,10 @@ export const createDoctor = async (req, res) => {
 // Arundhati's Doctor SignUp
 export const registerDoctor = async (req, res) => {
     try {
-        const { name, email, phoneNo, specialty, hospital, department, password } = req.body;
+        const { name, email, phoneNo, specialty, hospital, department, password, hospitalEmail } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Save the doctor
         const newUser = new Doctor({ 
             name,
             email,
@@ -82,12 +98,38 @@ export const registerDoctor = async (req, res) => {
             pdfs: [] 
         });
         await newUser.save();
-        res.status(201).json({ message: 'User created successfully' });
+        
+        // Save patient data in the specified department in the Hospital schema
+        const patientData = {
+            name,
+            degree: specialty,
+            email,
+            appointments: []
+        };
+
+        // Update the hospital with the patient data in the specified department
+        try {
+            const updatedHospital = await Hospital.findOneAndUpdate(
+                { email: hospitalEmail, [`departments.${department}`]: { $exists: true } },
+                { $push: { [`departments.${department}`]: patientData } },
+                { new: true }
+            );            
+
+            if (updatedHospital) {
+                res.status(201).json({ message: 'User created successfully' });
+            } else {
+                res.status(404).json({ error: 'Hospital or department not found' });
+            }
+        } catch (error) {
+            console.error('Error updating hospital:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
     } catch (error) {
-        console.error(error);
+        console.error('Error registering doctor:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 
 export const loginDoctor = async (req, res) => {
     try {

@@ -68,21 +68,6 @@ const HospitalProfile = () => {
   
     fetchData();
   }, [mail]);
-  
-
-  const handleAcceptRequest = async (requestId) => {
-    try {
-    } catch (error) {
-      console.error('Error accepting request:', error);
-    }
-  };
-
-  const handleRejectRequest = async (requestId) => {
-    try {
-    } catch (error) {
-      console.error('Error rejecting request:', error);
-    }
-  };
 
   const handleAddAnnouncement = async () => {
     const data = {
@@ -172,28 +157,14 @@ const HospitalProfile = () => {
           </div>
           <div className="flex mt-8">
             <div className="w-1/3 pr-4 border-r-2">
-              <h2 className="text-2xl font-semibold mb-4">Pending Requests</h2>
-              {pendingRequests.length > 0 ? (
-                pendingRequests.map((request) => (
-                  <div key={request.id} className="mb-4">
-                    <p>{request.details}</p>
-                    <button
-                      onClick={() => handleAcceptRequest(request.id)}
-                      className="bg-green-500 text-white px-4 py-2 mr-2 rounded"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => handleRejectRequest(request.id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <p>No pending requests</p>
-              )}
+            <div className="mt-8">
+            <button
+              onClick={() => navigate(`/doctor/signup/${mail}`)}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Sign Up Doctor
+            </button>
+          </div>
             </div>
             <div className="w-2/3 pl-4 pr-8">
               <h2 className="text-2xl font-semibold mb-4">Departments</h2>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [hospitals, setHospitals] = useState([]);
@@ -51,9 +52,11 @@ const HomePage = () => {
           {hospital.city}, {hospital.area}
         </p>
         <div className="flex justify-end">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            View Details
-          </button>
+          <Link to={`/hospital/view/${hospital.email}`}>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              View Details
+            </button>
+          </Link>
         </div>
       </div>
     </div>
