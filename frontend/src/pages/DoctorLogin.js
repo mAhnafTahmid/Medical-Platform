@@ -27,6 +27,7 @@ function DoctorLogin() {
             });
 
             if (!response.ok) {
+                alert('Invalid Credentials');
                 throw new Error('Login failed.');
             }
 

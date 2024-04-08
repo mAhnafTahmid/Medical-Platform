@@ -29,12 +29,12 @@ function Header() {
                         <Link to='/hospital/profile'><li>Hospital Profile</li></Link>
                     )}
                     <li><button onClick={handleSignOut}>Sign Out</button></li>
+                    <Link to='/delete'><li>Delete Account</li></Link>
                  </>
             ) : (
                 <>
                 <Link to='/doctor/login'><li>Login</li></Link>
                 <Link to='/signup'><li>Signup</li></Link>
-                
                 </>
             )}
         </ul>

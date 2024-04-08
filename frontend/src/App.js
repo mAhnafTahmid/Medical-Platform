@@ -13,6 +13,7 @@ import HospitalSignUp from './pages/HospitalSignup';
 import HospitalView from './pages/HospitalView';
 import PatientSignup from './pages/PatientSignup';
 import SignUp from './pages/SignUp';
+import DeleteProfile from './pages/DeleteProfile';
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/hospital/login" element={<HospitalLogin />} />
           <Route path="/hospital/view/:email" element={<HospitalView />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/delete" element={<DeleteProfile />} />
         </Routes>
       </BrowserRouter>
     </>

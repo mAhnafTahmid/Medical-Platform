@@ -29,13 +29,11 @@ export const removeDoctor = async (req, res) => {
         department.splice(index, 1)
         await hospital.save()
 
-        // Find the doctor by their email
         const doctorToDelete = await Doctor.findOne({ email: doctorEmail });
         if (!doctorToDelete) {
             throw new Error('Doctor not found in the Doctor collection');
         }
 
-        // Remove the doctor from the Doctor collection
         await Doctor.deleteOne({ email: doctorEmail });
         
         console.log(`Doctor ${doctorName} removed from ${departmentName} department in ${hospitalName} hospital`)
@@ -86,7 +84,6 @@ export const registerDoctor = async (req, res) => {
         const { name, email, phoneNo, specialty, hospital, department, password, hospitalEmail } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Save the doctor
         const newUser = new Doctor({ 
             name,
             email,
@@ -99,7 +96,6 @@ export const registerDoctor = async (req, res) => {
         });
         await newUser.save();
         
-        // Save patient data in the specified department in the Hospital schema
         const patientData = {
             name,
             degree: specialty,
@@ -107,7 +103,6 @@ export const registerDoctor = async (req, res) => {
             appointments: []
         };
 
-        // Update the hospital with the patient data in the specified department
         try {
             const updatedHospital = await Hospital.findOneAndUpdate(
                 { email: hospitalEmail, [`departments.${department}`]: { $exists: true } },
@@ -222,3 +217,49 @@ export const loginAll = async (req, res) => {
         res.status(500).json({ error: 'Error logging in' })
     }
 }
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        let user = await Patient.findOne({ email: email });
+        if (!user) {
+            user = await Doctor.findOne({ email: email });
+        }
+        if (!user) {
+            user = await Hospital.findOne({ email: email });
+        }
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        let isPasswordValid;
+        try {
+            isPasswordValid = await bcrypt.compare(password, user.password);
+        } catch (error) {
+            return res.status(500).json({ error: 'Error comparing passwords' });
+        }
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid password' });
+        }
+
+        try {
+            if (user instanceof Patient) {
+                await user.deleteOne();
+            } else if (user instanceof Doctor) {
+                await user.deleteOne();
+            } else if (user instanceof Hospital) {
+                await user.deleteOne();
+            } else {
+                return res.status(500).json({ error: 'Invalid user type' });
+            }
+        } catch (error) {
+            return res.status(500).json({ error: 'Error deleting account' });
+        }
+        return res.status(200).json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error deleting account' });
+    }
+};

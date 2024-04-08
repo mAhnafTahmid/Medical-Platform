@@ -19,7 +19,7 @@ const PatientProfile = () => {
     setEmail(mail)
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:3055/patient/${email}`, {
+        const response = await fetch(`http://localhost:3055/patient/${mail}`, {
           method: 'GET',
         });
         if (response.ok) {
@@ -41,7 +41,7 @@ const PatientProfile = () => {
     try {
       const formData = new FormData();
       formData.append('pdfFile', pdfFile);
-      const response = await fetch(`http://localhost:3055/patient/sendPdf/${email}/${patient.doctorEmail}`, {
+      const response = await fetch(`http://localhost:3055/patient/sendPdf/${mail}/${patient.doctorEmail}`, {
         method: 'POST',
         body: formData,
       });
@@ -49,6 +49,7 @@ const PatientProfile = () => {
       console.log('PDF submitted:', response);
       setPdfFile(null);
       setUploadedPDFs(newData.pdfs);
+      window.location.reload();
     } catch (error) {
       console.error('Error submitting PDF:', error);
     }
