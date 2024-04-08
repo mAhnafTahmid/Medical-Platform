@@ -58,7 +58,11 @@ const hospitalSchema = mongoose.Schema({
     },
     announcements: {
         type: [[String]]
-    }
+    },
+    fee: {
+        type: String,
+        required: true
+    },
 });
 
 export default mongoose.model('Hospital', hospitalSchema);

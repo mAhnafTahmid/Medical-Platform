@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
-
+import { useNavigate } from 'react-router-dom';
 
 const HospitalProfile = () => {
   const [hospitalDetails, setHospitalDetails] = useState({
@@ -12,22 +11,24 @@ const HospitalProfile = () => {
     roadNo: '',
     laneNo: '',
   });
-  const [pendingRequests, setPendingRequests] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [newAnnouncement, setNewAnnouncement] = useState('');
+  const [newFee, setNewFee] = useState('');
+  const [fee, setFee] = useState('');
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
+  const [newDepartmentName, setNewDepartmentName] = useState(''); // New state for new department name
   const mail = localStorage.getItem('email');
   const role = localStorage.getItem('role');
   const navigate = useNavigate();
 
   useEffect(() => {
     if (role !== 'hospital') {
-      navigate('/doctor/login')
+      navigate('/doctor/login');
       window.location.reload();
     }
-    
+
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:3055/hospital/${mail}`, {
@@ -40,12 +41,10 @@ const HospitalProfile = () => {
             phoneNumber: data.phoneNo,
             city: data.city,
             area: data.area,
-            houseNo: data.houseNo,
-            roadNo: data.roadNo,
-            laneNo: data.laneNo,
+            address: data.address,
           });
           setAnnouncements(data.announcements);
-  
+
           const departmentArray = [];
           for (const departmentName in data.departments) {
             if (data.departments.hasOwnProperty(departmentName)) {
@@ -56,16 +55,16 @@ const HospitalProfile = () => {
             }
           }
           setDepartments(departmentArray);
-  
+          setFee(data.fee)
           setName(data.name);
         }
-  
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, [mail]);
 
@@ -113,15 +112,15 @@ const HospitalProfile = () => {
     const data = {
       hospitalName: hospitalDetails.name,
       departmentName: name,
-      doctorName: doctorName
+      doctorName: doctorName,
     };
     try {
       const response = await fetch(`http://localhost:3055/doctor`, {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       const newData = await response.json();
       const departmentArray = [];
@@ -139,6 +138,97 @@ const HospitalProfile = () => {
     }
   };
 
+  const handleCreateDepartment = async () => {
+    const data = {
+      hospitalEmail: mail,
+      departmentName: newDepartmentName,
+    };
+    try {
+      const response = await fetch(`http://localhost:3055/hospital/department`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error('Creating Department Failed');
+      }
+      const newData = await response.json();
+      const departmentArray = [];
+      for (const departmentName in newData.departments) {
+        if (newData.departments.hasOwnProperty(departmentName)) {
+          departmentArray.push({
+            name: departmentName,
+            doctors: newData.departments[departmentName],
+          });
+        }
+      }
+      setDepartments(departmentArray);
+      setNewDepartmentName('');
+    } catch (error) {
+      console.error('Error creating department:', error);
+    }
+  };
+
+  const handleRemoveDepartment = async (departmentName) => {
+    try {
+      const response = await fetch(`http://localhost:3055/hospital/department`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ hospitalEmail: mail, departmentName }),
+      });
+      if (!response.ok) {
+        throw new Error('Removing Department Failed');
+      }
+      // Update state after successful deletion
+      const newData = await response.json();
+      const departmentArray = [];
+      for (const departmentName in newData.departments) {
+        if (newData.departments.hasOwnProperty(departmentName)) {
+          departmentArray.push({
+            name: departmentName,
+            doctors: newData.departments[departmentName],
+          });
+        }
+      }
+      setDepartments(departmentArray);
+    } catch (error) {
+      console.error('Error removing department:', error);
+    }
+  };
+
+  const handleUpdateFee = async () => {
+    try {
+      const data = {
+        mail,
+        newFee
+      }
+      if (newFee !== '') {
+        const response = await fetch(`http://localhost:3055/hospital/fee`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+          throw new Error('Failed updating fee');
+        }
+        const newData = await response.json();
+        setFee(newData.fee)
+      }
+      else {
+        throw new Error('No fee stated');
+      }
+    } catch (error) {
+      console.error('Error updating fee:', error);
+    }
+  }
+  
+
   return (
     <div className="container mx-auto px-4 py-8 text-center">
       {!loading && (
@@ -149,29 +239,51 @@ const HospitalProfile = () => {
             <div className="flex justify-between">
               <p>Email: {mail}</p>
               <p>Phone: {hospitalDetails.phoneNumber}</p>
+              <p>City: {hospitalDetails.city}</p>
+              <p>Area: {hospitalDetails.area}</p>
               <p>
-                Location:{' '}
-                {`${hospitalDetails.area}, ${hospitalDetails.city}, House:${hospitalDetails.houseNo}, Road:${hospitalDetails.roadNo}, Lane:${hospitalDetails.laneNo}`}
+                Address: {hospitalDetails.address}
               </p>
+              <p>Visiting Fee: {fee}</p>
             </div>
           </div>
           <div className="flex mt-8">
             <div className="w-1/3 pr-4 border-r-2">
-            <div className="mt-8">
-            <button
-              onClick={() => navigate(`/doctor/signup/${mail}`)}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Sign Up Doctor
-            </button>
-          </div>
+              <div className="mt-8">
+                <button
+                  onClick={() => navigate(`/doctor/signup/${mail}`)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Sign Up Doctor
+                </button>
+              </div>
+              <div className="mt-8">
+                <input
+                  type="text"
+                  value={newFee}
+                  onChange={(e) => setNewFee(e.target.value)}
+                  placeholder="Enter new fee in taka"
+                  className="w-full border border-gray-300 rounded p-2"
+                />
+                <button onClick={handleUpdateFee} className="bg-green-500 text-white px-4 py-2 mt-4 rounded-lg hover:bg-green-700">
+                  Update Visiting Fee
+                </button>
+              </div>
             </div>
             <div className="w-2/3 pl-4 pr-8">
               <h2 className="text-2xl font-semibold mb-4">Departments</h2>
               <div className="grid grid-cols-1 gap-4">
                 {departments.map((department, index) => (
                   <div key={index} className="border border-black rounded p-4">
-                    <h3 className="text-lg font-semibold mb-2 text-center">{department.name}</h3>
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-semibold mb-2 text-center">{department.name}</h3>
+                      <button
+                        onClick={() => handleRemoveDepartment(department.name)}
+                        className="bg-orange-400 text-white px-2 py-1 rounded hover:bg-orange-700"
+                      >
+                        Delete Department
+                      </button>
+                    </div>
                     {department.doctors.map((doctor, idx) => (
                       <div key={idx} className="flex justify-between items-center mb-2 border border-black rounded">
                         <span>{doctor.name}</span>
@@ -186,6 +298,18 @@ const HospitalProfile = () => {
                   </div>
                 ))}
               </div>
+              <div className="mt-8">
+                <input
+                  type="text"
+                  value={newDepartmentName}
+                  onChange={(e) => setNewDepartmentName(e.target.value)}
+                  placeholder="Enter new department name"
+                  className="w-full border border-gray-300 rounded p-2"
+                />
+                <button onClick={handleCreateDepartment} className="bg-green-500 text-white px-4 py-2 mt-4 rounded-lg hover:bg-green-700">
+                  Create New Department
+                </button>
+              </div>
             </div>
             <div className="w-1/3 pl-4 border-l-2">
               <div className="mb-8">
@@ -195,7 +319,7 @@ const HospitalProfile = () => {
                   onChange={(e) => setNewAnnouncement(e.target.value)}
                   className="w-full h-32 border border-gray-300 rounded p-2"
                 ></textarea>
-                <button onClick={handleAddAnnouncement} className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-lg hover:bg-blue-700">
+                <button onClick={handleAddAnnouncement} className="bg-green-500 text-white px-4 py-2 mt-4 rounded-lg hover:bg-green-700">
                   Add
                 </button>
               </div>
@@ -217,6 +341,7 @@ const HospitalProfile = () => {
                   <p>No announcements</p>
                 )}
               </div>
+              {/* Input field and button for creating a new department */}
             </div>
           </div>
         </div>

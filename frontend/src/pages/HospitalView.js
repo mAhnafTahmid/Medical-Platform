@@ -5,8 +5,7 @@ const HospitalView = () => {
     const [hospitalDetails, setHospitalDetails] = useState(null);
     const { email } = useParams();
     const navigate = useNavigate();
-  
-    // Get the patient email from local storage or set it to an empty string if not found
+
     const patientEmail = localStorage.getItem('email') || '';
     const role = localStorage.getItem('role')
   
@@ -149,7 +148,7 @@ const HospitalView = () => {
                   {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
                       <optgroup key={index} label={departmentName}>
                       {hospitalDetails.departments[departmentName].map((doctor, idx) => (
-                          <option key={idx} value={doctor}>{doctor}</option>
+                          <option key={idx} value={doctor.name}>{doctor.name}</option>
                       ))}
                       </optgroup>
                   ))}

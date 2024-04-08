@@ -143,7 +143,8 @@ export const signUpHospital = async (req, res) => {
             departments: emptyDepartments, 
             description, 
             password: hashedPassword, 
-            announcements: [] 
+            announcements: [],
+            fee: '500' 
         });
 
         await newHospital.save();
@@ -198,3 +199,86 @@ export const makeAppointment = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const createDepartment = async (req, res) => {
+    try {
+        const { hospitalEmail, departmentName } = req.body;
+        const hospital = await Hospital.findOne({ email: hospitalEmail });
+
+        if (!hospital) {
+            return res.status(404).json({ error: 'Hospital not found' });
+        }
+        
+        // Check if the department already exists
+        if (hospital.departments.has(departmentName)) {
+            return res.status(400).json({ error: 'Department already exists' });
+        }
+        
+        // Add the new empty department to the departments Map
+        hospital.departments.set(departmentName, []);
+
+        await hospital.save();
+
+        res.status(201).json(hospital);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+export const removeDepartment = async (req, res) => {
+    try {
+        const { hospitalEmail, departmentName } = req.body;
+        const hospital = await Hospital.findOne({ email: hospitalEmail });
+
+        if (!hospital) {
+            return res.status(404).json({ error: 'Hospital not found' });
+        }
+        
+        // Check if the department exists
+        if (!hospital.departments.has(departmentName)) {
+            return res.status(400).json({ error: 'Department does not exist' });
+        }
+        
+        // Remove the department from the departments Map
+        hospital.departments.delete(departmentName);
+
+        await hospital.save();
+
+        res.status(200).json(hospital);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+export const updateFee = async (req, res) => {
+    try {
+        const { mail, newFee } = req.body;
+        const hospital = await Hospital.findOne({ email: mail });
+
+        if (!hospital) {
+            return res.status(404).json({ error: 'Hospital not found' });
+        }
+
+        // Convert newFee to a number
+        const feeAsNumber = Number(newFee);
+
+        // Check if newFee is a valid number
+        if (isNaN(feeAsNumber)) {
+            return res.status(400).json({ error: 'New fee must be a valid number' });
+        }
+
+        // Update the fee property with the newFee value
+        hospital.fee = feeAsNumber;
+
+        // Save the updated hospital document
+        await hospital.save();
+
+        res.status(200).json(hospital);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+

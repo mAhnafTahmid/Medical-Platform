@@ -33,7 +33,7 @@ function Header() {
             ) : (
                 <>
                 <Link to='/doctor/login'><li>Login</li></Link>
-                <Link to='/doctor/signup'><li>Signup</li></Link>
+                <Link to='/signup'><li>Signup</li></Link>
                 
                 </>
             )}

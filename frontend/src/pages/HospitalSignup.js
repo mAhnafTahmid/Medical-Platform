@@ -51,7 +51,7 @@ function HospitalSignUp() {
                 setPassword('')
                 setDepartmentsInput(''); 
                 setDescription('');
-                navigate('/hospital/login');
+                navigate('/doctor/login');
             } else {
                 throw new Error('Registration failed');
             }
