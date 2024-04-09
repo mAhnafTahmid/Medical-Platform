@@ -13,7 +13,7 @@ const departmentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    appoitments: {
+    appointments: {
         type: [[String]],
         required: true
     }

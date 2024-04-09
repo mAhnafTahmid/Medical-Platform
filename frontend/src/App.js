@@ -14,6 +14,9 @@ import HospitalView from './pages/HospitalView';
 import PatientSignup from './pages/PatientSignup';
 import SignUp from './pages/SignUp';
 import DeleteProfile from './pages/DeleteProfile';
+import Prescription from './pages/Prescription';
+import PatientList from './pages/PatientsList';
+import PdfViewer from './pages/PdfViewer';
 
 const App = () => {
   return (
@@ -34,6 +37,9 @@ const App = () => {
           <Route path="/hospital/view/:email" element={<HospitalView />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/delete" element={<DeleteProfile />} />
+          <Route path="/prescription/:name" element={<Prescription />} />
+          <Route path="/patients" element={<PatientList />} />
+          <Route path="/pdfs" element={<PdfViewer />} />
         </Routes>
       </BrowserRouter>
     </>

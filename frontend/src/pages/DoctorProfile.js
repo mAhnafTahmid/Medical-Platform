@@ -56,15 +56,19 @@ function DoctorProfile() {
                     <p><strong style={{ color: 'black' }}>Depertment of: {doctor.department}</strong></p>
                 </div>
 
-                <Link to="/PrescriptionForm">
+                <Link to={`/prescription/${doctor.name}`}>
                     <button className='w-full bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 rounded mb-4'>
                         Write Prescription
                     </button>
                 </Link>
-
-                <Link to="/PatientList">
-                    <button className='w-full bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 rounded'>
+                <Link to="/patients">
+                    <button className='w-full bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 rounded mb-4'>
                         PatientList
+                    </button>
+                </Link>
+                <Link to="/pdfs">
+                    <button className='w-full bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 rounded'>
+                        View Patient Prescription Pdfs
                     </button>
                 </Link>
             </div>

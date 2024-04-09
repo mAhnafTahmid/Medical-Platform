@@ -263,3 +263,34 @@ export const deleteAccount = async (req, res) => {
         res.status(500).json({ error: 'Error deleting account' });
     }
 };
+
+export const sendPrescription = async (req, res) => {
+    try {
+        const { name, patientEmail, prescription } = req.body;
+        const patient = await Patient.findOne({ email: patientEmail });
+
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+        patient.prescriptions.push({
+            date: new Date(),
+            doctorName: name,
+            prescription: prescription
+        });
+        await patient.save();
+        return res.status(200).json({ message: "Prescription sent successfully" });
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const getPatientList = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
