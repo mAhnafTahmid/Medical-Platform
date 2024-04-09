@@ -285,12 +285,3 @@ export const sendPrescription = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-export const getPatientList = async (req, res) => {
-    try {
-        
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).json({ message: error.message });
-    }
-};

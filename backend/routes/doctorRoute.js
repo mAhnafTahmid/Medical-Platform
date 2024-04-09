@@ -1,13 +1,12 @@
 import express from "express";
 const doctorRouter = express.Router()
-import { removeDoctor, createDoctor, registerDoctor, getDoctorByEmail, loginAll, deleteAccount, sendPrescription, getPatientList } from '../controllers/doctorController.js'
+import { removeDoctor, createDoctor, registerDoctor, getDoctorByEmail, loginAll, deleteAccount, sendPrescription } from '../controllers/doctorController.js'
 
 
 // doctorRoute.post('/', createHospital)
 // doctorRoute.get('/:email', getHospitalAnnouncements)
 // doctorRoute.put('/', createAnnouncement)
 doctorRouter.get('/:email', getDoctorByEmail)
-doctorRouter.get('/patients/:email', getPatientList)
 doctorRouter.delete('/', removeDoctor)
 doctorRouter.post('/', createDoctor)
 doctorRouter.post('/signup', registerDoctor)

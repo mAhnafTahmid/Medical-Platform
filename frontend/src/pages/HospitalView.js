@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 const HospitalView = () => {
     const [hospitalDetails, setHospitalDetails] = useState(null);
+    const [announcements, setAnnouncements] = useState(null);
     const { email } = useParams();
     const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ const HospitalView = () => {
           if (response.ok) {
             const data = await response.json();
             setHospitalDetails(data);
+            setAnnouncements(data.announcements)
           } else {
             console.error('Failed to fetch hospital data');
           }
@@ -45,11 +47,11 @@ const HospitalView = () => {
     const handleSubmit = async (e) => {
       e.preventDefault();
       if (role !== 'patient') {
+        alert('Only patients are allowed to make appointments');
         navigate('/doctor/login')
         window.location.reload();
       }
       try {
-        // Send formData to backend
         const response = await fetch('http://localhost:3055/hospital/appoinment', {
           method: 'POST',
           headers: {
@@ -58,8 +60,10 @@ const HospitalView = () => {
           body: JSON.stringify(formData)
         });
         if (response.ok) {
-          // Handle success
           console.log('Appointment successfully made');
+          alert('Appointment successfully made');
+          navigate('/patient/profile')
+          window.location.reload();
         } else {
           console.error('Failed to make appointment');
         }
@@ -73,32 +77,44 @@ const HospitalView = () => {
     }
   
     return (
-      <>
+      <div className="flex flex-wrap justify-center gap-8 p-8">
         {/* Left side - Hospital Details */}
-        <div className="flex-2 bg-gray-200 p-4">
-          <h2 className="text-2xl font-semibold mb-4">Hospital Details</h2>
-          <div>
-              <p><strong>Name:</strong> {hospitalDetails.name}</p>
-              <p><strong>Email:</strong> {hospitalDetails.email}</p>
-              <p><strong>Phone Number:</strong> {hospitalDetails.phoneNo}</p>
-              <p><strong>City:</strong> {hospitalDetails.city}</p>
-              <p><strong>Area:</strong> {hospitalDetails.area}</p>
-              <p><strong>Address:</strong> {hospitalDetails.address}</p>
-              <p><strong>Description:</strong> {hospitalDetails.description}</p>
+        <div className="flex-1 bg-white rounded-lg shadow-md p-8">
+          <h2 className="text-xl font-semibold mb-4">Hospital Details</h2>
+          <div className="mb-4">
+            <p><strong>Name:</strong> {hospitalDetails.name}</p>
+            <p><strong>Email:</strong> {hospitalDetails.email}</p>
+            <p><strong>Phone Number:</strong> {hospitalDetails.phoneNo}</p>
+            <p><strong>City:</strong> {hospitalDetails.city}</p>
+            <p><strong>Area:</strong> {hospitalDetails.area}</p>
+            <p><strong>Address:</strong> {hospitalDetails.address}</p>
+            <p><strong>Description:</strong> {hospitalDetails.description}</p>
           </div>
-          {/* Display hospital details here */}
+          <hr className="my-4" />
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Announcements From The Hospital</h2>
+            {announcements && announcements.length !== 0 ? (
+              announcements.map((announcement, index) => (
+                <div key={index} className="mb-4 border-2 border-red-400 rounded-lg p-4">
+                  <p className="text-gray-700">{announcement[1]}</p>
+                </div>
+              ))
+            ) : (
+              <p>No announcements</p>
+            )}
+          </div>
         </div>
   
         {/* Right side - Appointment Form */}
-        <div className="flex-1 bg-gray-100 p-4">
-          <h2 className="text-2xl font-semibold mb-4">Make an Appointment</h2>
+        <div className="flex-1 bg-white rounded-lg shadow-md p-8">
+          <h2 className="text-xl font-semibold mb-4">Make an Appointment</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="patientName">
                 Patient Name
               </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="form-input w-full border border-gray-300 rounded-md py-2 px-3"
                 id="patientName"
                 type="text"
                 name="patientName"
@@ -107,8 +123,6 @@ const HospitalView = () => {
                 required
               />
             </div>
-            {/* Remove patient email input field */}
-            {/* Use the value from local storage instead */}
             <input
               type="hidden"
               name="patientEmail"
@@ -119,17 +133,17 @@ const HospitalView = () => {
                 Select Department
               </label>
               <select
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="department"
-                  name="selectedDepartment"
-                  value={formData.selectedDepartment}
-                  onChange={handleInputChange}
-                  required
-                  >
-                  <option value="">Select Department</option>
-                  {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
-                      <option key={index} value={departmentName}>{departmentName}</option>
-                  ))}
+                className="form-select w-full border border-gray-300 rounded-md py-2 px-3"
+                id="department"
+                name="selectedDepartment"
+                value={formData.selectedDepartment}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Department</option>
+                {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
+                  <option key={index} value={departmentName}>{departmentName}</option>
+                ))}
               </select>
             </div>
             <div className="mb-4">
@@ -137,21 +151,21 @@ const HospitalView = () => {
                 Select Doctor
               </label>
               <select
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="doctor"
-                  name="selectedDoctor"
-                  value={formData.selectedDoctor}
-                  onChange={handleInputChange}
-                  required
-                  >
-                  <option value="">Select Doctor</option>
-                  {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
-                      <optgroup key={index} label={departmentName}>
-                      {hospitalDetails.departments[departmentName].map((doctor, idx) => (
-                          <option key={idx} value={doctor.name}>{doctor.name}</option>
-                      ))}
-                      </optgroup>
-                  ))}
+                className="form-select w-full border border-gray-300 rounded-md py-2 px-3"
+                id="doctor"
+                name="selectedDoctor"
+                value={formData.selectedDoctor}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Doctor</option>
+                {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
+                  <optgroup key={index} label={departmentName}>
+                    {hospitalDetails.departments[departmentName].map((doctor, idx) => (
+                      <option key={idx} value={doctor.name}>{doctor.name}</option>
+                    ))}
+                  </optgroup>
+                ))}
               </select>
             </div>
             <button
@@ -162,9 +176,8 @@ const HospitalView = () => {
             </button>
           </form>
         </div>
-      </>
+      </div>
     );
   };
   
   export default HospitalView;
-  

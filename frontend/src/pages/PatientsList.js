@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 function PatientList() {
   const [patients, setPatients] = useState([]);
+  const { hospital } = useParams();
   const email = localStorage.getItem('email');
+  const role = localStorage.getItem('role');
+  const [doctor, setDoctor] = useState([])
 
   useEffect(() => {
-    fetch(`http://localhost:3055/doctor/patients/${email}`)
+    fetch(`http://localhost:3055/hospital/patients/${hospital}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -13,47 +17,67 @@ function PatientList() {
         return response.json();
       })
       .then(data => {
-        const extractedPatients = [];
-        const doctor = findDoctorByEmail(data.departments, email);
-        if (doctor) {
-          for (const appointment of doctor.appointments) {
-            extractedPatients.push({ name: appointment[0] });
-          }
-          setPatients(extractedPatients);
+        if (data.patients) {
+          setPatients(data.patients);
         } else {
-          console.error('Error fetching patients: Doctor not found for email:', email);
+          console.error('Error fetching patients: Patients data not found');
         }
       })
       .catch(error => {
         console.error('Error fetching patients:', error);
       });
-  }, [email]);
+  }, [hospital]);
 
   const currentDate = new Date().toLocaleDateString();
 
-  // Function to find doctor by email in the departments
-  const findDoctorByEmail = (departments, email) => {
-    for (const department of departments.values()) {
-      for (const doctor of department) {
-        if (doctor.email === email) {
-          return doctor;
+  const clearAppointments = async () => {
+    try {
+        const doctorResponse = await fetch(`http://localhost:3055/doctor/${email}`);
+        if (!doctorResponse.ok) {
+            throw new Error('Failed to fetch doctor data');
         }
-      }
+        const doctorData = await doctorResponse.json();
+        setDoctor(doctorData);
+
+        const formData = {
+            hospitalName: hospital,
+            doctorName: doctorData.name,
+            doctorDepartment: doctorData.department
+        };
+
+        const appointmentResponse = await fetch(`http://localhost:3055/hospital/delete/appointments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!appointmentResponse.ok) {
+            throw new Error('Failed to clear appointments');
+        }
+
+        setPatients([]);
+        alert('Successfully Cleared Patients List');
+    } catch (error) {
+        console.error('Error:', error);
     }
-    return null;
-  };
+};
 
   return (
-    <div className="PatientList">
-      <h1>Patient List</h1>
-      <p>Current Date: {currentDate}</p>
+    <div className="PatientList mx-auto max-w-md p-4 bg-gray-100 rounded shadow-lg">
+      <h1 className="text-2xl font-bold mb-4">Patient List</h1>
+      <p className="mb-4">Current Date: {currentDate}</p>
+      <button onClick={clearAppointments} className="bg-red-500 text-white px-4 py-2 rounded mb-4">
+        Clear Appointments
+      </button>
       <ul>
         {patients.map((patient, index) => (
-          <li key={index} style={{ padding: '10px', marginBottom: '5px' }}>
-            <div style={{ backgroundColor: 'blue', color: 'white', marginBottom: '5px', padding: '5px' }}>
+          <li key={index} className="bg-blue-500 text-white rounded-md p-4 mb-4">
+            <div className="mb-2">
               <strong>Name:</strong> {patient.name}
             </div>
-            <div style={{ backgroundColor: 'blue', color: 'white', padding: '5px' }}>
+            <div>
               <strong>Date:</strong> {currentDate}
             </div>
           </li>

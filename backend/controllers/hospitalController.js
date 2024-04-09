@@ -156,50 +156,6 @@ export const signUpHospital = async (req, res) => {
     }
 }
 
-export const makeAppointment = async (req, res) => {
-  const { patientName, patientEmail, selectedDepartment, selectedDoctor, hospitalEmail } = req.body;
-
-  try {
-    const hospital = await Hospital.findOne({ email: hospitalEmail });
-    if (!hospital) {
-      return res.status(404).json({ message: 'Hospital not found' });
-    }
-
-    const department = hospital.departments.find(dep => dep.name === selectedDepartment);
-    if (!department) {
-    return res.status(404).json({ message: 'Department not found' });
-    }
-
-    // Find the selected doctor in the department
-    const doctor = department.appointments.find(doc => doc.name === selectedDoctor);
-    if (!doctor) {
-    return res.status(404).json({ message: 'Doctor not found' });
-    }
-
-    // Calculate estimated time
-    const estimatedTime = ((doctor.appointments.length / 30) * 5).toString();
-
-    // Insert appointment details into doctor's appointments
-    doctor.appointments.push([patientName, patientEmail]);
-
-    // Save changes to the hospital
-    await hospital.save();
-
-    // Insert appointment details into patient schema
-    const patient = await Patient.findOne({ email: patientEmail });
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found' });
-    }
-    patient.appointments.push([hospital.name, selectedDoctor, estimatedTime]);
-    await patient.save();
-
-    res.status(201).json({ message: 'Appointment created successfully' });
-  } catch (error) {
-    console.error('Error creating appointment:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
 export const createDepartment = async (req, res) => {
     try {
         const { hospitalEmail, departmentName } = req.body;
@@ -209,12 +165,10 @@ export const createDepartment = async (req, res) => {
             return res.status(404).json({ error: 'Hospital not found' });
         }
         
-        // Check if the department already exists
         if (hospital.departments.has(departmentName)) {
             return res.status(400).json({ error: 'Department already exists' });
         }
         
-        // Add the new empty department to the departments Map
         hospital.departments.set(departmentName, []);
 
         await hospital.save();
@@ -235,12 +189,10 @@ export const removeDepartment = async (req, res) => {
             return res.status(404).json({ error: 'Hospital not found' });
         }
         
-        // Check if the department exists
         if (!hospital.departments.has(departmentName)) {
             return res.status(400).json({ error: 'Department does not exist' });
         }
         
-        // Remove the department from the departments Map
         hospital.departments.delete(departmentName);
 
         await hospital.save();
@@ -261,18 +213,14 @@ export const updateFee = async (req, res) => {
             return res.status(404).json({ error: 'Hospital not found' });
         }
 
-        // Convert newFee to a number
         const feeAsNumber = Number(newFee);
 
-        // Check if newFee is a valid number
         if (isNaN(feeAsNumber)) {
             return res.status(400).json({ error: 'New fee must be a valid number' });
         }
 
-        // Update the fee property with the newFee value
         hospital.fee = feeAsNumber;
 
-        // Save the updated hospital document
         await hospital.save();
 
         res.status(200).json(hospital);
@@ -282,3 +230,114 @@ export const updateFee = async (req, res) => {
     }
 }
 
+export const getPatientList = async (req, res) => {
+    try {
+        const hospitalName = req.params.hospital; 
+        const hospital = await Hospital.findOne({ name: hospitalName });
+
+        if (!hospital) {
+            return res.status(404).json({ message: 'Hospital not found' });
+        }
+
+        const patients = extractPatientsFromHospital(hospital); 
+
+        res.status(200).json({ patients });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const extractPatientsFromHospital = (hospital) => {
+    const patients = [];
+    for (const department of hospital.departments.values()) {
+        for (const doctor of department) {
+            for (const appointment of doctor.appointments) {
+                patients.push({ name: appointment[0] });
+            }
+        }
+    }
+    return patients;
+};
+
+export const makeAppointment = async (req, res) => {
+    const { patientName, patientEmail, selectedDepartment, selectedDoctor, hospitalEmail } = req.body;
+  
+    try {
+      const hospital = await Hospital.findOne({ email: hospitalEmail });
+      if (!hospital) {
+        return res.status(404).json({ message: 'Hospital not found' });
+      }
+  
+      const department = hospital.departments.get(selectedDepartment);
+      if (!department) {
+        return res.status(404).json({ message: 'Department not found' });
+      }
+  
+      const doctor = department.find(doc => doc.name === selectedDoctor);
+      if (!doctor) {
+        return res.status(404).json({ message: 'Doctor not found' });
+      }
+
+      const estimatedTime = (doctor.appointments.length * 5);
+      let hr = 5; 
+        let min = 0; 
+
+        if (estimatedTime >= 60) {
+            hr += Math.floor(estimatedTime / 60); 
+            min = estimatedTime % 60; 
+        }
+        else {
+            min = estimatedTime
+        }
+
+        const time = `${hr}:${min < 10 ? '0' + min : min} pm`; 
+
+
+      doctor.appointments.push([patientName, patientEmail]);
+
+      await hospital.save();
+
+      const patient = await Patient.findOne({ email: patientEmail });
+      if (!patient) {
+        return res.status(404).json({ message: 'Patient not found' });
+      }
+      patient.appointments.push([hospital.name, selectedDoctor, time]);
+      await patient.save();
+  
+      res.status(201).json({ message: 'Appointment created successfully' });
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+export const clearAppointments = async (req, res) => {
+    try {
+        const { hospitalName, doctorName, doctorDepartment } = req.body;
+        const hospital = await Hospital.findOne({ name: hospitalName });
+        if (!hospital) {
+            return res.status(404).json({ message: 'Hospital not found' });
+        }
+      
+        const department = hospital.departments.get(doctorDepartment);
+        if (!department) {
+            return res.status(404).json({ message: 'Department not found' });
+        }
+      
+        const doctor = department.find(doc => doc.name === doctorName);
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+    
+        doctor.appointments = []
+    
+        await hospital.save();
+  
+        res.status(200).json({ message: 'Appointments cleared successfully' });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  

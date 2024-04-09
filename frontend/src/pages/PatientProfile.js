@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 
 const PatientProfile = () => {
-  const [email, setEmail] = useState('');
   const [patient, setPatient] = useState(null);
   const [pdfFile, setPdfFile] = useState(null);
   const [prescription, setPrescription] = useState(null);
   const [uploadedPDFs, setUploadedPDFs] = useState([]);
+  const [appointment, setAppointment] = useState([]);
   const mail = localStorage.getItem('email');
   const role = localStorage.getItem('role');
   const navigate = useNavigate();
@@ -16,7 +16,6 @@ const PatientProfile = () => {
       navigate('/doctor/login')
       window.location.reload();
     }
-    setEmail(mail)
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:3055/patient/${mail}`, {
@@ -28,6 +27,9 @@ const PatientProfile = () => {
           const lastPrescription = data.prescriptions.slice(-1)[0];
           setPrescription(lastPrescription);
           setUploadedPDFs(data.pdfs);
+          const lastAppointment = data.appointments.length > 0 ? data.appointments.slice(-1)[0] : [];
+          setAppointment(lastAppointment);
+
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
@@ -68,6 +70,18 @@ const PatientProfile = () => {
             <p className="text-center">Email: {patient?.email}</p>
             <p className="text-center">Phone: {patient?.phoneNo}</p>
           </div>
+          <div className="mb-4">
+          <h2 className="text-lg font-bold text-center">Your Appointment Information</h2>
+          {appointment.length > 0 ? (
+            <>
+              <p className="text-center">Hospital Name: {appointment[0]}</p>
+              <p className="text-center">Doctor Name: {appointment[1]}</p>
+              <p className="text-center">Estimated Time: {appointment[2]}</p>
+            </>
+          ) : (
+            <p className="text-center">No appointment scheduled</p>
+          )}
+        </div>
         </div>
         <div className="w-1/2 p-4">
           <div className="mb-4">

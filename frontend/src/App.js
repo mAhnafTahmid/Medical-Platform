@@ -38,7 +38,7 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/delete" element={<DeleteProfile />} />
           <Route path="/prescription/:name" element={<Prescription />} />
-          <Route path="/patients" element={<PatientList />} />
+          <Route path="/patients/:hospital" element={<PatientList />} />
           <Route path="/pdfs" element={<PdfViewer />} />
         </Routes>
       </BrowserRouter>
