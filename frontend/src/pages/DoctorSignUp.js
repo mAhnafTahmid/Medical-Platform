@@ -106,7 +106,7 @@ function SignUp() {
                 </form>
             </div>
             <div className='w-[50%] h-[100%] flex justify-center items-center bg-teal-800'>
-                <h2 className='text-3xl text-white'>Doctor Sign Up Page</h2>
+                <h2 className='text-3xl text-white'>Doctor SignUp Page</h2>
             </div>
         </div>
     );

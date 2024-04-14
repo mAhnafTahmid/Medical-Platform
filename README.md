@@ -6,5 +6,5 @@ To run the Project:
 
 To push code to github existing repo:
 1) git add .
-2) git commit -m "Final Touch"
+2) git commit -m "Completed"
 3) git push origin ahnaf2

@@ -108,6 +108,7 @@ const HospitalView = () => {
         {/* Right side - Appointment Form */}
         <div className="flex-1 bg-white rounded-lg shadow-md p-8">
           <h2 className="text-xl font-semibold mb-4">Make an Appointment</h2>
+          <h1 className='text-red-700 pb-5'>Visiting Fee {hospitalDetails.fee} Taka</h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="patientName">
