@@ -1,5 +1,6 @@
 import Hospital from '../models/hospitalModel.js'
 import Patient from '../models/patientModel.js';
+import Doctor from '../models/doctorModel.js';
 import bcrypt from 'bcrypt';
 
 export const createHospital = async (req, res) => {
@@ -127,6 +128,25 @@ export const getAllHospitals = async (req, res) => {
 export const signUpHospital = async (req, res) => {
     try {
         const { name, email, phoneNo, address, area, city, password, description, departments } = req.body;
+
+        let existingUser = await Patient.findOne({ email: email })
+        if (!existingUser) {
+            existingUser = await Doctor.findOne({ email: email })
+        }
+        if (!existingUser) {
+            existingUser = await Hospital.findOne({ email: email })
+        }
+        if (existingUser) {
+            return res.status(400).json({ error: 'User with the email provided already exists!' })
+        }
+
+        if (phoneNo.length !== 11) {
+            return res.status(400).json({ error: 'Invalid Phone Number! Phone Number must be 11 characters long!' })
+        }
+        if (!phoneNo.startsWith("01")) {
+            return res.status(400).json({ error: 'Invalid Phone Number for Bangladesh!' })
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const departmentNames = Object.keys(departments);
         const emptyDepartments = {};

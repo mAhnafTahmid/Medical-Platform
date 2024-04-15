@@ -82,6 +82,25 @@ export const createDoctor = async (req, res) => {
 export const registerDoctor = async (req, res) => {
     try {
         const { name, email, phoneNo, specialty, hospital, department, password, hospitalEmail } = req.body;
+
+        let existingUser = await Patient.findOne({ email: email })
+        if (!existingUser) {
+            existingUser = await Doctor.findOne({ email: email })
+        }
+        if (!existingUser) {
+            existingUser = await Hospital.findOne({ email: email })
+        }
+        if (existingUser) {
+            return res.status(400).json({ error: 'User with the email provided already exists!' })
+        }
+
+        if (phoneNo.length !== 11) {
+            return res.status(400).json({ error: 'Invalid Phone Number! Phone Number must be 11 characters long!' })
+        }
+        if (!phoneNo.startsWith("01")) {
+            return res.status(400).json({ error: 'Invalid Phone Number for Bangladesh!' })
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new Doctor({ 

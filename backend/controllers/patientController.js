@@ -1,4 +1,6 @@
 import Patient from '../models/patientModel.js'
+import Hospital from '../models/hospitalModel.js'
+import Doctor from '../models/doctorModel.js';
 import bcrypt from 'bcrypt';
 
 export const createPatient = async (req, res) => {
@@ -12,6 +14,24 @@ export const createPatient = async (req, res) => {
             return res.status(400).send({
                 message: 'Send all the required fields: name, email, phone number, password'
             });
+        }
+
+        let existingUser = await Patient.findOne({ email: req.body.email })
+        if (!existingUser) {
+            existingUser = await Doctor.findOne({ email: req.body.email })
+        }
+        if (!existingUser) {
+            existingUser = await Hospital.findOne({ email: req.body.email })
+        }
+        if (existingUser) {
+            return res.status(400).json({ error: 'User with the email provided already exists!' })
+        }
+
+        if (req.body.phoneNo.length !== 11) {
+            return res.status(400).json({ error: 'Invalid Phone Number! Phone Number must be 11 characters long!' })
+        }
+        if (!req.body.phoneNo.startsWith("01")) {
+            return res.status(400).json({ error: 'Invalid Phone Number for Bangladesh!' })
         }
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
