@@ -139,7 +139,10 @@ export const signUpHospital = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'User with the email provided already exists!' })
         }
-
+        existingUser = await Hospital.findOne({ name: name })
+        if (existingUser) {
+            return res.status(400).json({ error: 'User with the name provided already exists!' })
+        }
         if (phoneNo.length !== 11) {
             return res.status(400).json({ error: 'Invalid Phone Number! Phone Number must be 11 characters long!' })
         }

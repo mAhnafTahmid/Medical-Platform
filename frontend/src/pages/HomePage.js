@@ -63,49 +63,54 @@ const HomePage = () => {
   );
 
   return (
-    <div className="flex">
-      {/* Left side */}
-      <div className="w-1/3 p-4 border-r border-blue-900 bg-yellow-200">
-        <div className="fixed w-1/3 pr-9">
-          <h2>Search using Hospital Name</h2>
-          <input
-            type="text"
-            placeholder="Search by name"
-            value={nameQuery}
-            onChange={(e) => setNameQuery(e.target.value)}
-            className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
-          />
-          <h2>Search Hospital within an Area</h2>
-          <input
-            type="text"
-            placeholder="Search by area"
-            value={areaQuery}
-            onChange={(e) => setAreaQuery(e.target.value)}
-            className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
-          />
-          <h2>Search Hospital within a City</h2>
-          <input
-            type="text"
-            placeholder="Search by city"
-            value={cityQuery}
-            onChange={(e) => setCityQuery(e.target.value)}
-            className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
-          />
-          <h2>Search Hospital containing a Department</h2>
-          <input
-            type="text"
-            placeholder="Search by department"
-            value={departmentQuery}
-            onChange={(e) => setDepartmentQuery(e.target.value)}
-            className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
-          />
-        </div>
+    <div className="flex flex-col">
+      <div className="w-full">
+        <h2 className="text-center bg-gray-800 text-red-600 pb-5 pt-5 text-4xl">View All Hospitals</h2>
       </div>
-      {/* Right side */}
-      <div className="w-2/3 p-4 flex flex-wrap pl-12 bg-blue-300">
-        {filteredHospitals.map((hospital, index) => (
-          <HospitalCard key={index} hospital={hospital} />
-        ))}
+      <div className="flex">
+        <div className="w-1/3 p-4 border-r border-blue-900 bg-yellow-200 min-h-screen">
+          <div className="fixed w-1/3 pr-9">
+            <h2>Search using Hospital Name</h2>
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={nameQuery}
+              onChange={(e) => setNameQuery(e.target.value)}
+              className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
+            />
+            <h2>Search Hospital within an Area</h2>
+            <input
+              type="text"
+              placeholder="Search by area"
+              value={areaQuery}
+              onChange={(e) => setAreaQuery(e.target.value)}
+              className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
+            />
+            <h2>Search Hospital within a City</h2>
+            <input
+              type="text"
+              placeholder="Search by city"
+              value={cityQuery}
+              onChange={(e) => setCityQuery(e.target.value)}
+              className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
+            />
+            <h2>Search Hospital containing a Department</h2>
+            <input
+              type="text"
+              placeholder="Search by department"
+              value={departmentQuery}
+              onChange={(e) => setDepartmentQuery(e.target.value)}
+              className="border border-gray-400 rounded px-4 py-2 mb-4 block w-full"
+            />
+          </div>
+        </div>
+        <div className="w-2/3 p-4 flex flex-wrap pl-12 bg-blue-300 min-h-screen">
+          <div className="flex flex-wrap w-full max-h-screen overflow-auto">
+            {filteredHospitals.map((hospital, index) => (
+              <HospitalCard key={index} hospital={hospital} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

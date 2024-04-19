@@ -17,6 +17,9 @@ import DeleteProfile from './pages/DeleteProfile';
 import Prescription from './pages/Prescription';
 import PatientList from './pages/PatientsList';
 import PdfViewer from './pages/PdfViewer';
+import ChangePassword from './pages/ChangePassword';
+import DoctorPage from './pages/DoctorPage';
+import ViewDoctor from './pages/ViewDoctor';
 
 const App = () => {
   return (
@@ -40,6 +43,9 @@ const App = () => {
           <Route path="/prescription/:name" element={<Prescription />} />
           <Route path="/patients/:hospital" element={<PatientList />} />
           <Route path="/pdfs" element={<PdfViewer />} />
+          <Route path="/password" element={<ChangePassword />} />
+          <Route path="/doctors" element={<DoctorPage />} />
+          <Route path="/doctor/view/:email" element={<ViewDoctor />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -64,14 +64,14 @@ const PatientProfile = () => {
       </div>
       <div className="flex flex-1">
         <div className="w-1/2 p-4">
-          <div className="mb-4">
+          <div className="mb-4 pb-14">
             <h2 className="text-lg font-bold text-center">Personal Information</h2>
             <p className="text-center">Name: {patient?.name}</p>
             <p className="text-center">Email: {patient?.email}</p>
             <p className="text-center">Phone: {patient?.phoneNo}</p>
           </div>
-          <div className="mb-4">
-          <h2 className="text-lg font-bold text-center">Your Appointment Information</h2>
+          <div className="mb-4 border-2 border-gray-800 rounded-lg text-center mx-auto">
+          <h2 className="text-lg font-bold text-center text-red-500">Your Appointment Information</h2>
           {appointment.length > 0 ? (
             <>
               <p className="text-center">Hospital Name: {appointment[0]}</p>

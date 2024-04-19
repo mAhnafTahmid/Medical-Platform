@@ -304,3 +304,114 @@ export const sendPrescription = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const changePasswordAll = async (req, res) => {
+    try {
+        const { email, currentPassword, newPassword, role } = req.body
+        let user = ''
+        console.log(email)
+        console.log(currentPassword)
+        console.log(newPassword)
+
+        if (role === 'patient') {
+            user = await Patient.findOne({ email: email });
+        }
+
+        else if (role === 'doctor') {
+            user = await Doctor.findOne({ email: email });
+        }
+
+        else if (role === 'hospital') {
+            user = await Hospital.findOne({ email: email });
+        }
+
+        else {
+            return res.status(401).json({ error: 'User not Logged-In!'})
+        }
+
+        let isPasswordValid;
+        try {
+            isPasswordValid = await bcrypt.compare(currentPassword, user.password)
+        } catch (error) {
+            return res.status(500).json({ error: 'Error comparing password!' })
+        }
+
+        if(!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid password!' })
+        }
+
+        try {
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword
+            await user.save()
+        } catch (error) {
+            return res.status(500).json({ error: 'Error saving new password to DB!' })
+        }
+
+        res.status(200).json({ message: 'Password successfully updated' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error updating password!' })
+    }
+}
+
+export const getAllDoctors = async (req, res) => {
+    try {
+        const doctor = await Doctor.find()
+        return res.status(200).send(doctor);
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send({ message: error.message })
+    }
+}
+
+export const makeAppointment = async (req, res) => {
+    const { patientName, patientEmail, selectedDepartment, selectedDoctor, hospitalName } = req.body;
+  
+    try {
+      const hospital = await Hospital.findOne({ name: hospitalName });
+      if (!hospital) {
+        return res.status(404).json({ message: 'Hospital not found' });
+      }
+  
+      const department = hospital.departments.get(selectedDepartment);
+      if (!department) {
+        return res.status(404).json({ message: 'Department not found' });
+      }
+  
+      const doctor = department.find(doc => doc.name === selectedDoctor);
+      if (!doctor) {
+        return res.status(404).json({ message: 'Doctor not found' });
+      }
+
+      const estimatedTime = (doctor.appointments.length * 5);
+      let hr = 5; 
+        let min = 0; 
+
+        if (estimatedTime >= 60) {
+            hr += Math.floor(estimatedTime / 60); 
+            min = estimatedTime % 60; 
+        }
+        else {
+            min = estimatedTime
+        }
+
+        const time = `${hr}:${min < 10 ? '0' + min : min} pm`; 
+
+
+      doctor.appointments.push([patientName, patientEmail]);
+
+      await hospital.save();
+
+      const patient = await Patient.findOne({ email: patientEmail });
+      if (!patient) {
+        return res.status(404).json({ message: 'Patient not found' });
+      }
+      patient.appointments.push([hospital.name, selectedDoctor, time]);
+      await patient.save();
+  
+      res.status(201).json({ message: 'Appointment created successfully' });
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };

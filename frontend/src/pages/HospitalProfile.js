@@ -83,6 +83,7 @@ const HospitalProfile = () => {
       });
       const newData = await response.json();
       setAnnouncements(newData.announcements);
+      setNewAnnouncement('')
     } catch (error) {
       console.error('Error adding announcement:', error);
     }
@@ -219,6 +220,7 @@ const HospitalProfile = () => {
         }
         const newData = await response.json();
         setFee(newData.fee)
+        setNewFee('')
       }
       else {
         throw new Error('No fee stated');
