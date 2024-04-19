@@ -9,6 +9,7 @@ const PatientProfile = () => {
   const [appointment, setAppointment] = useState([]);
   const mail = localStorage.getItem('email');
   const role = localStorage.getItem('role');
+
   const navigate = useNavigate();
 
   useEffect(() => {

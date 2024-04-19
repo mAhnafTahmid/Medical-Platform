@@ -309,9 +309,6 @@ export const changePasswordAll = async (req, res) => {
     try {
         const { email, currentPassword, newPassword, role } = req.body
         let user = ''
-        console.log(email)
-        console.log(currentPassword)
-        console.log(newPassword)
 
         if (role === 'patient') {
             user = await Patient.findOne({ email: email });
