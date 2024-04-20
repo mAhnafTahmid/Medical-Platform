@@ -91,7 +91,7 @@ function SignUp() {
                     <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='text' placeholder='Phone Number'
                         value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} /><br /><br />
                     <label>Degree</label><br />
-                    <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='text' placeholder='Specialty'
+                    <input className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' type='text' placeholder='Degree'
                         value={specialty} onChange={(e) => setSpecialty(e.target.value)} /><br /><br />
                     <label>Department</label><br />
                     <select className='w-[400px] h-[40px] rounded-xl bg-zinc-700 p-2' value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)}>
