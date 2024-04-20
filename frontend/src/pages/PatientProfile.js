@@ -32,7 +32,6 @@ const PatientProfile = () => {
           const lastAppointment = data.appointments.length > 0 ? data.appointments.slice(-1)[0] : [];
           setAppointment(lastAppointment);
         }
-        alert('Unable to fetch data');
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
