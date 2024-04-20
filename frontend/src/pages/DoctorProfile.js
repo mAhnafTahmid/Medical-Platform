@@ -12,6 +12,7 @@ function DoctorProfile() {
 
     useEffect(() => {
         if (role !== 'doctor') {
+            alert('Unauthorised to view this page');
             navigate('/doctor/login')
             window.location.reload();
         }

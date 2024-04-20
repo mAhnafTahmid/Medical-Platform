@@ -68,6 +68,7 @@ function SignUp() {
                 setPassword('');
                 navigate('/hospital/profile');
             } else {
+                alert('Registration Unsuccessful');
                 console.log('Unable to register user');
             }
         } catch (error) {

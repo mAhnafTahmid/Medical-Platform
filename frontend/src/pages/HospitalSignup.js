@@ -53,6 +53,7 @@ function HospitalSignUp() {
                 setDescription('');
                 navigate('/doctor/login');
             } else {
+                alert('Registration Unsuccessful');
                 throw new Error('Registration failed');
             }
         } catch (error) {

@@ -14,6 +14,7 @@ const PatientProfile = () => {
 
   useEffect(() => {
     if (role !== 'patient') {
+      alert('Unauthorised to view this page');
       navigate('/doctor/login')
       window.location.reload();
     }
@@ -30,8 +31,8 @@ const PatientProfile = () => {
           setUploadedPDFs(data.pdfs);
           const lastAppointment = data.appointments.length > 0 ? data.appointments.slice(-1)[0] : [];
           setAppointment(lastAppointment);
-
         }
+        alert('Unable to fetch data');
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
@@ -49,11 +50,13 @@ const PatientProfile = () => {
         body: formData,
       });
       const newData = await response.json();
+      alert('Pdf submitted successfully!');
       console.log('PDF submitted:', response);
       setPdfFile(null);
       setUploadedPDFs(newData.pdfs);
       window.location.reload();
     } catch (error) {
+      alert('Unable to submit pdf!');
       console.error('Error submitting PDF:', error);
     }
   };

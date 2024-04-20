@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const DeleteProfile = () => {
@@ -7,12 +7,15 @@ const DeleteProfile = () => {
   const isUserSignedIn = !!localStorage.getItem('token')
   const navigate = useNavigate();
 
-  const handleDeleteAccount = async () => {
+
+  useEffect(() => {
     if (!isUserSignedIn) {
-        alert('You need to Login before deleting you account!');
-        navigate('/doctor/login')
-        window.location.reload();
-    }
+    alert('You need to Login before deleting you account!');
+    navigate('/doctor/login')
+    window.location.reload();
+  }})
+
+  const handleDeleteAccount = async () => {
     try {
       const response = await fetch('http://localhost:3055/doctor/delete', {
         method: 'POST',

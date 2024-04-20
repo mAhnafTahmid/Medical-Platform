@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function PatientList() {
   const [patients, setPatients] = useState([]);
@@ -7,8 +7,14 @@ function PatientList() {
   const email = localStorage.getItem('email');
   const role = localStorage.getItem('role');
   const [doctor, setDoctor] = useState([])
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (role !== 'doctor') {
+      alert('Unauthorised to view this page');
+      navigate('/doctor/login')
+      window.location.reload();
+    }
     fetch(`http://localhost:3055/hospital/patients/${hospital}`)
       .then(response => {
         if (!response.ok) {
@@ -34,7 +40,8 @@ function PatientList() {
     try {
         const doctorResponse = await fetch(`http://localhost:3055/doctor/${email}`);
         if (!doctorResponse.ok) {
-            throw new Error('Failed to fetch doctor data');
+          alert('Unable to fetch data');
+          throw new Error('Failed to fetch doctor data');
         }
         const doctorData = await doctorResponse.json();
         setDoctor(doctorData);
@@ -54,7 +61,8 @@ function PatientList() {
         });
 
         if (!appointmentResponse.ok) {
-            throw new Error('Failed to clear appointments');
+          alert('Unable to delete appointments');
+          throw new Error('Failed to clear appointments');
         }
 
         setPatients([]);

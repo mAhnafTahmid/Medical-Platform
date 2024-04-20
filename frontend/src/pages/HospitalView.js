@@ -106,77 +106,78 @@ const HospitalView = () => {
         </div>
   
         {/* Right side - Appointment Form */}
-        <div className="flex-1 bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-xl font-semibold mb-4">Make an Appointment</h2>
-          <h1 className='text-red-700 pb-5'>Visiting Fee {hospitalDetails.fee} Taka</h1>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="patientName">
-                Patient Name
-              </label>
+        {role === 'patient' && (
+          <div className="flex-1 bg-white rounded-lg shadow-md p-8">
+            <h2 className="text-xl font-semibold mb-4">Make an Appointment</h2>
+            <h1 className='text-red-700 pb-5'>Visiting Fee {hospitalDetails.fee} Taka</h1>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="patientName">
+                  Patient Name
+                </label>
+                <input
+                  className="form-input w-full border border-gray-300 rounded-md py-2 px-3"
+                  id="patientName"
+                  type="text"
+                  name="patientName"
+                  value={formData.patientName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
               <input
-                className="form-input w-full border border-gray-300 rounded-md py-2 px-3"
-                id="patientName"
-                type="text"
-                name="patientName"
-                value={formData.patientName}
-                onChange={handleInputChange}
-                required
+                type="hidden"
+                name="patientEmail"
+                value={formData.patientEmail}
               />
-            </div>
-            <input
-              type="hidden"
-              name="patientEmail"
-              value={formData.patientEmail}
-            />
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="department">
-                Select Department
-              </label>
-              <select
-                className="form-select w-full border border-gray-300 rounded-md py-2 px-3"
-                id="department"
-                name="selectedDepartment"
-                value={formData.selectedDepartment}
-                onChange={handleInputChange}
-                required
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="department">
+                  Select Department
+                </label>
+                <select
+                  className="form-select w-full border border-gray-300 rounded-md py-2 px-3"
+                  id="department"
+                  name="selectedDepartment"
+                  value={formData.selectedDepartment}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Department</option>
+                  {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
+                    <option key={index} value={departmentName}>{departmentName}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="doctor">
+                  Select Doctor
+                </label>
+                <select
+                  className="form-select w-full border border-gray-300 rounded-md py-2 px-3"
+                  id="doctor"
+                  name="selectedDoctor"
+                  value={formData.selectedDoctor}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Doctor</option>
+                  {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
+                    <optgroup key={index} label={departmentName}>
+                      {hospitalDetails.departments[departmentName].map((doctor, idx) => (
+                        <option key={idx} value={doctor.name}>{doctor.name}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="submit"
               >
-                <option value="">Select Department</option>
-                {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
-                  <option key={index} value={departmentName}>{departmentName}</option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="doctor">
-                Select Doctor
-              </label>
-              <select
-                className="form-select w-full border border-gray-300 rounded-md py-2 px-3"
-                id="doctor"
-                name="selectedDoctor"
-                value={formData.selectedDoctor}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Doctor</option>
-                {Object.keys(hospitalDetails.departments).map((departmentName, index) => (
-                  <optgroup key={index} label={departmentName}>
-                    {hospitalDetails.departments[departmentName].map((doctor, idx) => (
-                      <option key={idx} value={doctor.name}>{doctor.name}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Make Appointment
-            </button>
-          </form>
-        </div>
+                Make Appointment
+              </button>
+            </form>
+          </div>)}
       </div>
     );
   };

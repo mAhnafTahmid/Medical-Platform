@@ -25,6 +25,7 @@ const HospitalProfile = () => {
 
   useEffect(() => {
     if (role !== 'hospital') {
+      alert('Unauthorised to view this page');
       navigate('/doctor/login');
       window.location.reload();
     }

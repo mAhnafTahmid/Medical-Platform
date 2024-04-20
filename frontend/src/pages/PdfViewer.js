@@ -1,10 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 
 const PdfViewer = () => {
   const [email, setEmail] = useState('');
   const [patient, setPatient] = useState(null);
   const [pdfs, setPdfs] = useState([]);
   const [error, setError] = useState('');
+  const role = localStorage.getItem('role');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (role !== 'doctor') {
+      alert('Unauthorised to view this page');
+      navigate('/doctor/login')
+      window.location.reload();
+    }
+  })
 
   const handleShowPdfs = async () => {
     try {

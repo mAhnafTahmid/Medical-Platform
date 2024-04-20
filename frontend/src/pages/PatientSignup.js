@@ -28,6 +28,7 @@ function PatientSignup() {
       });
 
       if (!response.ok) {
+        alert('Registration Unsuccessful');
         throw new Error('Network response was not ok');
       }
 

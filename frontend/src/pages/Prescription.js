@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function Prescription() {
   const [patientEmail, setPatientEmail] = useState('');
   const [prescription, setPrescription] = useState('');
   const [error, setError] = useState('');
   const { name } = useParams();
+  const role = localStorage.getItem('role');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (role !== 'doctor') {
+      alert('Unauthorised to view this page');
+      navigate('/doctor/login')
+      window.location.reload();
+    }
+  })
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -19,6 +29,7 @@ function Prescription() {
     fetch('http://localhost:3055/doctor/prescription', requestOptions)
       .then(response => {
         if (!response.ok) {
+          alert('Prescription submission unsuccessfully.');
           throw new Error('Failed to submit prescription.');
         }
         alert('Prescription submitted successfully.');
