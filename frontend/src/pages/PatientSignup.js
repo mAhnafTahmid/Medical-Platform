@@ -43,7 +43,7 @@ function PatientSignup() {
   return (
     <div className="signup-container flex justify-center items-center min-h-screen bg-gray-900">
       <div className="signup-content w-96 p-10 bg-gray-800 rounded-lg shadow-lg">
-        <h2 className="text-green-500 text-2xl mb-8">Patient Register</h2>
+        <h2 className="text-green-500 text-2xl mb-8 text-center">Patient SignUp</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-box mb-4">
             <input
@@ -98,7 +98,7 @@ function PatientSignup() {
             </button>
           </div>
         </form>
-        <p>Already have an account</p>
+        <p className='text-orange-400 mt-4 mb-4'>Already have an account?</p>
         <a href="/doctor/login" className="w-full py-3 bg-gray-300 text-black font-semibold rounded cursor-pointer transition duration-300 hover:bg-gray-400 block text-center text-decoration-none">
           Login
         </a>

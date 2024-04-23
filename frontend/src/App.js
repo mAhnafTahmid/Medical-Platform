@@ -20,6 +20,8 @@ import PdfViewer from './pages/PdfViewer';
 import ChangePassword from './pages/ChangePassword';
 import DoctorPage from './pages/DoctorPage';
 import ViewDoctor from './pages/ViewDoctor';
+import AdminLogin from './pages/AdminLogin';
+import AdminPage from './pages/AdminPage';
 
 const App = () => {
   return (
@@ -46,6 +48,8 @@ const App = () => {
           <Route path="/password" element={<ChangePassword />} />
           <Route path="/doctors" element={<DoctorPage />} />
           <Route path="/doctor/view/:email" element={<ViewDoctor />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/page" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </>

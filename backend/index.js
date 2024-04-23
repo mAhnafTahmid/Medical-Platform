@@ -9,6 +9,7 @@ import { dirname, join } from 'path';
 import hospitalRouter from './routes/hospitalRoute.js';
 import doctorRouter from './routes/doctorRoute.js'
 import patientRouter from './routes/patientRoute.js'
+import adminRouter from './routes/adminRoute.js'
 
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/uploads', express.static(join(__dirname, 'uploads')));
 app.use('/hospital', hospitalRouter)
 app.use('/doctor', doctorRouter)
 app.use('/patient', patientRouter)
+app.use('/admin', adminRouter)
 
 // server running code and a root route for checking
 app.get('/*', async (req, res) => {

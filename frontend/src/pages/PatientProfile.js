@@ -107,7 +107,7 @@ const PatientProfile = () => {
             {uploadedPDFs && uploadedPDFs.length > 0 && (
               uploadedPDFs.map((pdf, index) => (
                 <div key={index} className="text-center mt-4 mb-4">
-                  <a href={pdf && pdf.length >= 2 ? pdf[1] : ''} download={`pdf_${index + 1}`} className="bg-blue-500 text-white px-4 py-2 rounded mx-auto mb-2 hover:bg-blue-700">Download PDF {index + 1}</a>
+                  <a href={pdf && pdf.length >= 2 ? pdf[1] : ''} target="_blank"  download={`pdf_${index + 1}`} className="bg-blue-500 text-white px-4 py-2 rounded mx-auto mb-2 hover:bg-blue-700">Download PDF {index + 1}</a>
                 </div>
               ))
             )}
