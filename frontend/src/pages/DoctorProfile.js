@@ -64,7 +64,7 @@ function DoctorProfile() {
                 </Link>
                 <Link to={`/patients/${doctor.hospital}`}>
                     <button className='w-full bg-white hover:bg-gray-300 text-black font-bold py-2 px-4 rounded mb-4'>
-                        PatientList
+                        Patient Appointments List
                     </button>
                 </Link>
                 <Link to="/pdfs">
